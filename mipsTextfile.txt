@@ -1,0 +1,154 @@
+User data segment [10000000]..[10040000]
+[10000000]..[1000ffff]  00000000
+[10010000]    00000001  00000000  00000000  00000000    . . . . . . . . . . . . . . . . 
+[10010010]    0000000a  00000000  00000000  00000000    . . . . . . . . . . . . . . . . 
+[10010020]..[1003ffff]  00000000
+
+User Text Segment [00400000]..[00440000]
+
+memory     Machinecode  instrsuction		comment lines in assemly languane(;)/original comment lines(#)
+address   	  (hex)	code
+User Text Segment [00400000]..[00440000]
+[00400000] 8fa40000  lw $4, 0($29)           	 	; 183: lw $a0 0($sp) 		# argc 
+[00400004] 27a50004  addiu $5, $29, 4        		 ; 184: addiu $a1 $sp 4	 # argv 
+[00400008] 24a60004  addiu $6, $5, 4        		  ; 185: addiu $a2 $a1 4 		# envp 
+[0040000c] 00041080  sll $2, $4, 2          	 	 ; 186: sll $v0 $a0 2 
+[00400010] 00c23021  addu $6, $6, $2         		 ; 187: addu $a2 $a2 $v0 
+[00400014] 0c100009  jal 0x00400024 [main]    	; 188: jal main 
+[00400018] 00000000  nop                     		 ; 189: nop 
+[0040001c] 3402000a  ori $2, $0, 10        		   ; 191: li $v0 10 
+[00400020] 0000000c  syscall                		  ; 192: syscall # syscall 10 (exit) 
+[00400024] 3c011001  lui $1, 4097         		    ; 20: lw $t0 , num			 # store the numbers in the temporary variables 
+[00400028] 8c280000  lw $8, 0($1)             
+[0040002c] 3c011001  lui $1, 4097           		  ; 21: lw $t1 , divisor 
+[00400030] 8c290004  lw $9, 4($1)             
+[00400034] 3c011001  lui $1, 4097             		; 22: lw $t2 , count 
+[00400038] 8c2a0008  lw $10, 8($1)            
+[0040003c] 3c011001  lui $1, 4097           		  ; 23: lw $t5,numbers_printed # $t5, holds total of numbers printed 
+[00400040] 8c2d000c  lw $13, 12($1)           
+[00400044] 00082021  addu $4, $0, $8        		  ; 27: move $a0 , $t0			 ### copy the contents of $t0, $t1 and $t2 in the 
+[00400048] 00092821  addu $5, $0, $9        		  ; 28: move $a1 , $t1			 ## variables $a0,$a1, and $a2 
+[0040004c] 000a3021  addu $6, $0, $10        	 ; 29: move $a2 , $t2 
+[00400050] 0c100047  jal 0x0040011c [Prime_test]; 31: jal Prime_test			 # call the function Prime_test to check if num is a prime###### 
+[00400054] 34010001  ori $1, $0, 1            		; 34: beq $v0, 1, Found_pr		 # Check if the returned value of the Prime_test is True(1), or False(0), if it's true,jump 
+[00400058] 10220003  beq $1, $2, 12 [Found_pr-0x00400058] 
+[0040005c] 21080001  addi $8, $8, 1           		; 35: add $t0, $t0, 1	 		# else increment the number to be check then 
+[00400060] 08100011  j 0x00400044 [Loop1]     	; 36: j Loop1		 		# Jump to the Loop1 to check the next prime 
+[00400064] 71082002  mul $4, $8, $8          		 ; 39: mul $a0, $t0, $t0		 ## store the squared value of prime hold by $t0 in the variable $a0 then 
+[00400068] 0c10005e  jal 0x00400178 [Reverse] 		; 41: jal Reverse 		## call the reverse to returned value of the Squared Prime 
+[0040006c] 00025821  addu $11, $0, $2         		; 43: move $t3, $v0		 ## copy the reversed square value in the temporary variable $t3 
+[00400070] 00022021  addu $4, $0, $2         		 ; 45: move $a0, $v0				 # copy the contents of returned value in the Argument register 
+[00400074] 71082802  mul $5, $8, $8           		; 46: mul $a1, $t0, $t0				 # store the square of $num is the temporaty variable to $a1 
+[00400078] 0c10006e  jal 0x004001b8 [Palindrome]		; 48: jal Palindrome 		## call Palindrome check if the square number and its reverse is a palindrome 
+[0040007c] 00022021  addu $4, $0, $2        		  ; 50: move $a0, $v0 
+[00400080] 34010001  ori $1, $0, 1           		 ; 52: beq $a0, 1 , True 				# if the square is a palindrome jump the branch true 
+[00400084] 10240002  beq $1, $4, 8 [True-0x00400084] 
+[00400088] 08100025  j 0x00400094 [Not_palind]	; 53: j Not_palind		 # otherwise go the Not_palind 
+[0040008c] 21080001  addi $8, $8, 1           		; 56: add $t0, $t0, 1 		# if the the Square is a palindrome increment the $num and jump back to check the other prime 
+[00400090] 08100011  j 0x00400044 [Loop1]     	; 57: j Loop1 
+[00400094] 00082021  addu $4, $0, $8         		 ; 60: move $a0, $t0 
+[00400098] 0c10005e  jal 0x00400178 [Reverse]	 ; 62: jal Reverse 
+[0040009c] 00046021  addu $12, $0, $4         	; 64: move $t4, $a0 
+[004000a0] 34050000  ori $5, $0, 0           		 ; 65: li $a1,0 
+[004000a4] 34060000  ori $6, $0, 0            		; 66: li $a2,0 
+[004000a8] 0c100047  jal 0x0040011c [Prime_test]	; 68: jal Prime_test 
+[004000ac] 34010001  ori $1, $0, 1            		; 70: beq $a0, 1 , To_Check_square 
+[004000b0] 10240002  beq $1, $4, 8 [To_Check_square-0x004000b0] 
+[004000b4] 08100034  j 0x004000d0 [Reverse_not_squrare]
+[004000b8] 000b2021  addu $4, $0, $11        	 ; 74: move $a0, $t3 
+[004000bc] 000c2821  addu $5, $0, $12         	; 75: move $a1, $t4 
+[004000c0] 0c100076  jal 0x004001d8 [CheckSquare]	; 77: jal CheckSquare 
+[004000c4] 34010001  ori $1, $0, 1           		 ; 79: bne $v0, 1, Reverse_not_squrare
+ 
+[004000c8] 14220002  bne $1, $2, 8 [Reverse_not_squrare-0x004000c8] 
+
+[004000cc] 08100036  j 0x004000d8 [True4]   	  ; 80: j True4 
+[004000d0] 21080001  addi $8, $8, 1           			; 83: add $t0, $t0, 1	 # Increment the $num to check other prime number 
+[004000d4] 08100011  j 0x00400044 [Loop1]   		  ; 84: j Loop1		 # jump back to Loop1 
+[004000d8] 00085821  addu $11, $0, $8         ; 87: move $t3,$t0 		# store the number (num) that its square is reversible Prime Square in the temporary variable $t3 
+[004000dc] 08100038  j 0x004000e0 [Print]     ; 88: j Print		 # branch to print the reversible Prime Square 
+[004000e0] 21ad0001  addi $13, $13, 1         ; 92: add $t5,$t5,1 
+[004000e4] 716b2002  mul $4, $11, $11         ; 93: mul $a0, $t3, $t3 
+[004000e8] 34020001  ori $2, $0, 1            ; 94: li $v0, 1 
+[004000ec] 00042021  addu $4, $0, $4          ; 95: move $a0,$a0 
+[004000f0] 0000000c  syscall                  ; 96: syscall 
+[004000f4] 3401000a  ori $1, $0, 10           ; 97: beq $t5, 10 ,Exit 	# if 10 number have been printed Exit the program
+ 
+[004000f8] 102d0007  beq $1, $13, 28 [Exit-0x004000f8] 
+[004000fc] 21080001  addi $8, $8, 1           ; 98: add $t0, $t0,1 	# otherwise increment the $num and go back to increment $num to check the other prime 
+[00400100] 34020004  ori $2, $0, 4            ; 101: li $v0,4 
+
+[00400104] 3c011001  lui $1, 4097 [next_line] ; 102: la $a0, next_line 	
+
+[00400108] 34240010  ori $4, $1, 16 [next_line] 
+[0040010c] 0000000c  syscall                  		; 103: syscall 
+
+[00400110] 08100011  j 0x00400044 [Loop1]     ; 104: j Loop1 
+[00400114] 3402000a  ori $2, $0, 10           ; 106: li $v0, 10 
+[00400118] 0000000c  syscall                  ; 107: syscall 
+[0040011c] 0085082a  slt $1, $4, $5           ; 121: bgt $a1,$a0, Test
+ 
+[00400120] 1420000d  bne $1, $0, 52 [Test-0x00400120] 
+[00400124] 20a50001  addi $5, $5, 1           ; 122: add $a1, $a1, 1 
+[00400128] 14a00003  bne $5, $0, 12           ; 123: rem $a3, $a0, $a1 
+[0040012c] 00000000  nop                      
+[00400130] 0000000d  break                    
+[00400134] 0085001a  div $4, $5               
+[00400138] 00003810  mfhi $7                  
+
+[0040013c] 10070002  beq $0, $7, 8 [Loop3-0x0040013c]
+[00400140] 08100047  j 0x0040011c [Loop2]    	 ; 126: j Loop2 
+[00400144] 20c60001  addi $6, $6, 1          		 ; 129: add $a2, $a2, 1 
+[00400148] 0085082a  slt $1, $4, $5          		 ; 130: bgt $a1, $a0, Test 
+
+[0040014c] 14200002  bne $1, $0, 8 [Test-0x0040014c] 
+[00400150] 08100047  j 0x0040011c [Loop2]    	 ; 131: j Loop2 
+[00400154] 34010002  ori $1, $0, 2            		; 134: beq $a2, 2, True1
+ 
+[00400158] 10260002  beq $1, $6, 8 [True1-0x00400158] 
+[0040015c] 0810005b  j 0x0040016c [False]    	 ; 135: j False 
+[00400160] 34040001  ori $4, $0, 1           		 ; 138: li $a0, 1 
+[00400164] 00041021  addu $2, $0, $4        		  ; 139: move $v0, $a0 
+[00400168] 03e00008  jr $31                  		 ; 140: jr $ra 
+[0040016c] 34040000  ori $4, $0, 0           		 ; 143: li $a0, 0 
+[00400170] 00041021  addu $2, $0, $4        		  ; 144: move $v0, $a0 
+[00400174] 03e00008  jr $31                  		 ; 145: jr $ra 
+[00400178] 00042021  addu $4, $0, $4        	  	; 157: move $a0, $a0 
+[0040017c] 34050000  ori $5, $0, 0            		; 158: li $a1, 0 	
+
+[00400180] 1004000b  beq $0, $4, 44 [Return-0x00400180]
+[00400184] 3401000a  ori $1, $0, 10          		 ; 163: mul $a1, $a1, 10 
+[00400188] 70a12802  mul $5, $5, $1           
+[0040018c] 3401000a  ori $1, $0, 10         		  ; 164: rem $a2, $a0, 10 
+[00400190] 0081001a  div $4, $1               
+[00400194] 00003010  mfhi $6                  
+[00400198] 00a62820  add $5, $5, $6           		; 165: add $a1, $a1, $a2 
+[0040019c] 3401000a  ori $1, $0, 10          		 ; 167: div $a0, $a0, 10 
+[004001a0] 0081001a  div $4, $1               
+[004001a4] 00002012  mflo $4          
+        
+[004001a8] 08100060  j 0x00400180 [Loop4]    	 ; 168: j Loop4 
+[004001ac] 00052021  addu $4, $0, $5         		 ; 171: move $a0, $a1 
+[004001b0] 00041021  addu $2, $0, $4         		 ; 172: move $v0, $a0 
+[004001b4] 03e00008  jr $31                 		  ; 173: jr $ra 
+
+[004001b8] 10850002  beq $4, $5, 8 [True2-0x004001b8]
+[004001bc] 08100073  j 0x004001cc [False1]  	  ; 186: j False1 
+[004001c0] 34040001  ori $4, $0, 1           		 ; 189: li $a0, 1 
+[004001c4] 00041021  addu $2, $0, $4         		 ; 190: move $v0, $a0 
+[004001c8] 03e00008  jr $31                   		; 191: jr $ra 
+[004001cc] 34040000  ori $4, $0, 0          		  ; 194: li $a0, 0 
+[004001d0] 00041021  addu $2, $0, $4         		 ; 195: move $v0, $a0 
+[004001d4] 03e00008  jr $31                 		  ; 196: jr $ra 
+[004001d8] 14a00003  bne $5, $0, 12           		; 209: divu $t3, $a0, $a1 
+[004001dc] 00000000  nop                      
+[004001e0] 0000000d  break                    
+[004001e4] 0085001b  divu $4, $5              
+[004001e8] 00005812  mflo $11 
+                
+[004001ec] 11650002  beq $11, $5, 8 [SquareNum-0x004001ec]
+[004001f0] 0810007f  j 0x004001fc [Not_Square]	; 211: j Not_Square 
+[004001f4] 34020001  ori $2, $0, 1            		; 215: li $v0, 1 
+[004001f8] 03e00008  jr $31                  		 ; 217: jr $ra 
+[004001fc] 34020000  ori $2, $0, 0            		; 220: li $v0, 0 
+[00400200] 03e00008  jr $31                   		; 221: jr $ra 
